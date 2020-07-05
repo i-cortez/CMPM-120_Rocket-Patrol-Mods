@@ -209,6 +209,21 @@ class Play extends Phaser.Scene
             null,
             this
         );
+
+        // set a timer to change the value of ship speed after
+        // half of the game time has elapsed
+        this.factor = 1;
+        this.upSpeed = this.time.delayedCall
+        (
+            game.settings.gameTimer/2,
+            () =>
+            {
+                this.factor = 1.5;
+                console.log(this.factor);
+            },
+            null,
+            this
+        );
     }
     // end create() ------------------------------------------------------------
     //--------------------------------------------------------------------------
@@ -237,11 +252,11 @@ class Play extends Phaser.Scene
             // update rocket
             this.p1Rocket.update();
             // update spaceship 1
-            this.ship1.update();
+            this.ship1.update(this.factor);
             // update spaceship 2
-            this.ship2.update();
+            this.ship2.update(this.factor);
             // update spaceship 3
-            this.ship3.update();
+            this.ship3.update(this.factor);
         }
 
         // check for collisions

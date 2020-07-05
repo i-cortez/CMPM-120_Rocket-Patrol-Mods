@@ -215,14 +215,13 @@ class Play extends Phaser.Scene
         this.factor = 1;
         this.upSpeed = this.time.delayedCall
         (
-            game.settings.gameTimer/2,
-            () =>
+            game.settings.gameTimer/2, // delay
+            () => // callback function
             {
                 this.factor = 1.5;
-                console.log(this.factor);
             },
-            null,
-            this
+            null, // array of args
+            this // callback scope
         );
     }
     // end create() ------------------------------------------------------------

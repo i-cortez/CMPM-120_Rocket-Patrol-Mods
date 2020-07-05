@@ -4,7 +4,9 @@ class Play extends Phaser.Scene
     {
         super("playScene");
     }
-
+    //--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
     preload()
     {
         // load images/tile sprites
@@ -12,7 +14,7 @@ class Play extends Phaser.Scene
         this.load.image("spaceship", "./Assets/spaceship.png");
         this.load.image("starfield", "./Assets/starfield.png");
 
-        // load spritesheet
+        // load spritesheet for explosion animation
         this.load.spritesheet
         (
             "explosion",
@@ -24,8 +26,12 @@ class Play extends Phaser.Scene
                 endFrame: 9
             }
         );
-    } // end preload()
-
+    } 
+    //-end preload()------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // CREATE
+    //--------------------------------------------------------------------------
+    //
     create()
     {
         // place tile sprite background
@@ -135,6 +141,44 @@ class Play extends Phaser.Scene
         };
         this.scoreLeft = this.add.text(69, 54, this.p1Score, scoreConfig);
 
+        // create a game clock that will countdown until game over
+        this.gameClock = game.settings.gameTimer;
+        // create an object to populate the text configuration members
+        let gameClockConfig =
+        {
+            fontFamily: "Courier",
+            fontSize: "28px",
+            backgroundColor: "#f3b141",
+            color: "#843605",
+            align: "right",
+            padding: {top: 5, bottom: 5},
+            fixedWidth: 100
+        };
+        // add the text to the screen
+        this.timeLeft = this.add.text
+        (
+            460, // x-coord
+            54, // y-coord
+            this.formatTime(this.gameClock), // text to display
+            gameClockConfig // text style config object
+        );
+        // add the event to decrement the clock
+        // code adapted from:
+        //  https://phaser.discourse.group/t/countdown-timer/2471/3
+        this.timedEvent = this.time.addEvent
+        (
+            {
+                delay: 1000,
+                callback: () =>
+                {
+                    this.gameClock -= 1000; 
+                    this.timeLeft.text = this.formatTime(this.gameClock);
+                },
+                scope: this,
+                loop: true
+            }
+        );
+
         // game over flag
         this.gameOver = false;
         // 60s play clock
@@ -165,17 +209,22 @@ class Play extends Phaser.Scene
             null,
             this
         );
-    } // end create()
-
+    }
+    // end create() ------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // UPDATE
+    //--------------------------------------------------------------------------
     // generally updates at every frame
     update()
     {
+        // when game is over remove the game clock event
+        if(this.gameOver) this.time.removeAllEvents();
+
         // check for key input to restart
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyF))
         {
             this.scene.restart(this.p1Score);
         }
-
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyM))
         {
             this.scene.start("menuScene");
@@ -213,8 +262,12 @@ class Play extends Phaser.Scene
             this.p1Rocket.reset();
             this.shipExplode(this.ship1);
         }
-    } // end update()
-
+    }
+    //-end update()-------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // COLLISIONS
+    //--------------------------------------------------------------------------
+    //
     checkCollision(rocket, ship)
     {
         // simple AABB bounds checking
@@ -227,8 +280,12 @@ class Play extends Phaser.Scene
         ) return true;
 
         else return false;
-    } // end checkCollision(rocket, ship)
-    
+    }
+    //-end checkCollision(rocket, ship)-----------------------------------------
+    //--------------------------------------------------------------------------
+    // EXPLOSION
+    //--------------------------------------------------------------------------
+    //
     shipExplode(ship)
     {
         ship.alpha = 0; // set ship to be fully transparent
@@ -249,6 +306,21 @@ class Play extends Phaser.Scene
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
         this.sound.play("sfx_explosion");
-    } // end shipExplode(ship)
-} // end class Play
+    }
+    //-end shipExplode(ship)----------------------------------------------------
+    //--------------------------------------------------------------------------
+    // FORMAT TIME
+    //--------------------------------------------------------------------------
+    // code adapted from:
+    //  https://phaser.discourse.group/t/countdown-timer/2471/3
+    formatTime(ms)
+    {
+        let s = ms/1000;
+        let min = Math.floor(s/60);
+        let seconds = s%60;
+        seconds = seconds.toString().padStart(2, "0");
+        return `${min}:${seconds}`;
+    }
+}
+// end class Play
 

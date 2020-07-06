@@ -12,6 +12,7 @@ class Play extends Phaser.Scene
         // load images/tile sprites
         this.load.image("rocket", "./Assets/rocket.png");
         this.load.image("spaceship", "./Assets/spaceship.png");
+        this.load.image("fastship", "./Assets/fastShip.png");
         this.load.image("starfield", "./Assets/starfield.png");
 
         // load spritesheet for explosion animation
@@ -94,6 +95,17 @@ class Play extends Phaser.Scene
             "spaceship",
             0,
             10
+        ).setOrigin(0, 0);
+
+        // add fastship 1
+        this.fast1 = new Fastship
+        (
+            this,
+            game.config.width + 288,
+            324,
+            "fastship",
+            0,
+            50
         ).setOrigin(0, 0);
 
         // define keys
@@ -256,6 +268,8 @@ class Play extends Phaser.Scene
             this.ship2.update(this.factor);
             // update spaceship 3
             this.ship3.update(this.factor);
+            // update fastship 1
+            this.fast1.update(this.factor);
         }
 
         // check for collisions
@@ -275,6 +289,12 @@ class Play extends Phaser.Scene
         {
             this.p1Rocket.reset();
             this.shipExplode(this.ship1);
+        }
+
+        if(this.checkCollision(this.p1Rocket, this.fast1))
+        {
+            this.p1Rocket.reset();
+            this.shipExplode(this.fast1);
         }
     }
     //-end update()-------------------------------------------------------------

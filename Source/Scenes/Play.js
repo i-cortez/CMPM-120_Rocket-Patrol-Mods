@@ -138,20 +138,35 @@ class Play extends Phaser.Scene
             }
         );
 
-        // player score
+        // player score updates during play
         this.p1Score = 0;
-        // score display
+        // high score is saved across games played
+        this.hScore = parseInt(localStorage.getItem("score")) || 0;
+        // scores display configuration
         let scoreConfig =
         {
             fontFamily: "Courier",
-            fontSize: "28px",
+            fontSize: "20px",
             backgroundColor: "#f3b141",
             color: "#843605",
-            align: "right",
+            align: "left",
             padding: {top: 5, bottom: 5},
-            fixedWidth: 100
+            fixedWidth: 150
         };
-        this.scoreLeft = this.add.text(69, 54, this.p1Score, scoreConfig);
+        this.scoreLeft = this.add.text
+        (
+            50, // x-coord
+            54, // y-coord
+            "Score: " + this.p1Score, // initial text
+            scoreConfig // config settings
+        );
+        this.best = this.add.text
+        (
+            225, // x-coord
+            54, // y coord
+            "Best: " + this.hScore, // initial text
+            scoreConfig // config settings
+        );
 
         // create a game clock that will countdown until game over
         this.gameClock = game.settings.gameTimer;
@@ -159,19 +174,19 @@ class Play extends Phaser.Scene
         let gameClockConfig =
         {
             fontFamily: "Courier",
-            fontSize: "28px",
+            fontSize: "20px",
             backgroundColor: "#f3b141",
             color: "#843605",
-            align: "right",
+            align: "left",
             padding: {top: 5, bottom: 5},
-            fixedWidth: 100
+            fixedWidth: 140
         };
         // add the text to the screen
         this.timeLeft = this.add.text
         (
-            460, // x-coord
+            400, // x-coord
             54, // y-coord
-            this.formatTime(this.gameClock), // text to display
+            "Timer: " + this.formatTime(this.gameClock), // text to display
             gameClockConfig // text style config object
         );
         // add the event to decrement the clock
@@ -184,7 +199,8 @@ class Play extends Phaser.Scene
                 callback: () =>
                 {
                     this.gameClock -= 1000; 
-                    this.timeLeft.text = this.formatTime(this.gameClock);
+                    this.timeLeft.text = "Timer: " +
+                        this.formatTime(this.gameClock);
                 },
                 scope: this,
                 loop: true
@@ -338,7 +354,14 @@ class Play extends Phaser.Scene
         );
         // score increment and repaint
         this.p1Score += ship.points;
-        this.scoreLeft.text = this.p1Score;
+        // update the high score if needed
+        if(this.p1Score > this.hScore)
+        {
+            this.hScore = this.p1Score;
+            localStorage.setItem("score", this.hScore);
+            this.best.text = "Best: " + this.hScore;
+        }
+        this.scoreLeft.text = "Score: " + this.p1Score;
         this.sound.play("sfx_explosion");
     }
     //-end shipExplode(ship)----------------------------------------------------

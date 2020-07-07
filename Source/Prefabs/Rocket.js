@@ -9,30 +9,37 @@ class Rocket extends Phaser.GameObjects.Sprite
 
         // track the rockets firing status
         this.isFiring = false;
-
         this.sfxRocket = scene.sound.add("sfx_rocket"); // add rocket sfx
     }
 
     update()
     {
         // left/right movement
+        // if the rocket is firing, movement is not allowed
         if(!this.isFiring)
         {
-            if(keyLEFT.isDown && this.x >= 47) this.x -=2;
-            
-            else if(keyRIGHT.isDown && this.x <= 578) this.x += 2;
+            // use the mouse as the user movement input
+            // code adapted from:
+            //  https://phaser.io/examples/v3/view/games/breakout/breakout
+            mouse.on
+            (
+                "pointermove", // event
+                (pointer) => // callback
+                {
+                    this.x = Phaser.Math.Clamp(pointer.x, 47, 578);
+                },
+                this // context
+            );
         }
 
         // fire button
-        if(Phaser.Input.Keyboard.JustDown(keyF) && !this.isFiring) 
+        if(mouse.activePointer.leftButtonDown() && !this.isFiring) 
         {
-            this.isFiring = true;
-            this.sfxRocket.play(); // play the rocket sfx
+          this.isFiring = true;
+          this.sfxRocket.play(); // play the rocket sfx
         }
-        
         // if fired, move up
         if(this.isFiring && this.y >= 108) this.y -= 2;
-
         // reset on miss
         if(this.y <= 108)
         {

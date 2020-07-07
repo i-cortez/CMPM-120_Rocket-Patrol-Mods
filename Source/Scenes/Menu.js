@@ -5,6 +5,9 @@ class Menu extends Phaser.Scene
         super("menuScene");
     }
 
+    //--------------------------------------------------------------------------
+    // PRELOAD
+    //--------------------------------------------------------------------------
     preload()
     {
         // load audio files
@@ -12,10 +15,13 @@ class Menu extends Phaser.Scene
         this.load.audio("sfx_explosion", "./Assets/explosion38.wav");
         this.load.audio("sfx_rocket", "./Assets/rocket_shot.wav");
     }
-
+    //-end preload()------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // CREATE
+    //--------------------------------------------------------------------------
     create()
     {
-        // menu display
+        // menu display configuration
         let menuConfig =
         {
             fontFamily: "Courier",
@@ -27,17 +33,18 @@ class Menu extends Phaser.Scene
             fixedWidth: 0
         };
 
-        // show menu text
+        // meny text positioning
         let centerX = game.config.width/2;
         let centerY = game.config.height/2;
         let textSpacer = 64;
 
+        // show menu text
         this.add.text
         (
-            centerX,
-            centerY - textSpacer,
-            "ROCKET PATROL",
-            menuConfig
+            centerX, // x-coord
+            centerY - textSpacer, // y-coord
+            "ROCKET PATROL", // initial text to be displayed
+            menuConfig // configuration object
         ).setOrigin(0.5);
 
         this.add.text
@@ -48,7 +55,7 @@ class Menu extends Phaser.Scene
             menuConfig
         ).setOrigin(0.5);
 
-        menuConfig.backgroundColor = "#00C080";
+        menuConfig.backgroundColor = "#00C080"; // set object property
         menuConfig.color = "#000000";
         this.add.text
         (
@@ -61,27 +68,27 @@ class Menu extends Phaser.Scene
         // define input keys
         keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         keyH = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.H);
-
-        // this.scene.start("playScene");
-    } // end create()
-
+    }
+    //-end create()-------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    // UPDATE
+    //--------------------------------------------------------------------------
     update()
     {
         if(Phaser.Input.Keyboard.JustDown(keyE))
         {
-            // easy mode
+            // configuration settings for easy mode
             game.settings =
             {
                 spaceshipSpeed: 3,
                 fastshipSpeed: 4,
                 gameTimer: 60000
             }
-
             this.sound.play("sfx_select");
             this.scene.start("playScene");
         }
 
-        // hard mode
+        // configuration settings for hard mode
         if(Phaser.Input.Keyboard.JustDown(keyH))
         {
             game.settings =
@@ -92,6 +99,8 @@ class Menu extends Phaser.Scene
             }
             this.sound.play("sfx_select");
             this.scene.start("playScene");
-        }
+        } 
     }
 }
+//-end update()-----------------------------------------------------------------
+

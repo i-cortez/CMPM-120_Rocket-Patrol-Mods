@@ -5,8 +5,8 @@ class Play extends Phaser.Scene
         super("playScene");
     }
     //--------------------------------------------------------------------------
+    // PRELOAD
     //--------------------------------------------------------------------------
-    //
     preload()
     {
         // load images/tile sprites
@@ -32,9 +32,10 @@ class Play extends Phaser.Scene
     //--------------------------------------------------------------------------
     // CREATE
     //--------------------------------------------------------------------------
-    //
     create()
     {
+        //----------------------------------------------------------------------
+        // configure the user interface
         // place tile sprite background
         this.starfield = this.add.tileSprite
         (
@@ -45,7 +46,7 @@ class Play extends Phaser.Scene
             "starfield"
         ).setOrigin(0, 0);
 
-        // white rectangle borders
+        // place white rectangle borders
         this.add.rectangle(5, 5, 630, 32, 0xffffff).setOrigin(0, 0);
         this.add.rectangle(5, 443, 630, 32, 0xffffff).setOrigin(0, 0);
         this.add.rectangle(5, 5, 32, 455, 0xffffff).setOrigin(0, 0);
@@ -54,25 +55,27 @@ class Play extends Phaser.Scene
         // green UI background
         this.add.rectangle(37, 42, 566, 64, 0x00ff00).setOrigin(0, 0);
 
+        //----------------------------------------------------------------------
+        // add in the game objects
         // add rocket (p1)
         this.p1Rocket = new Rocket
         (
-            this,
-            game.config.width/2,
-            431,
-            "rocket",
-            0
+            this, // scene
+            game.config.width/2, // x-coord
+            431, // y-coord
+            "rocket", // texture
+            0 // frame
         ).setScale(0.5, 0.5).setOrigin(0, 0);
 
         // add spaceship 1
         this.ship1 = new Spaceship
         (
-            this,
-            game.config.width + 192,
-            132,
-            "spaceship",
-            0,
-            30
+            this, // scene
+            game.config.width + 192, // x-coord
+            196, // y-coord
+            "spaceship", // texture
+            0, // frame
+            30 // point value
         ).setOrigin(0, 0);
 
         // add spaceship 2
@@ -80,7 +83,7 @@ class Play extends Phaser.Scene
         (
             this,
             game.config.width + 96,
-            196,
+            260,
             "spaceship",
             0,
             20
@@ -91,44 +94,46 @@ class Play extends Phaser.Scene
         (
             this,
             game.config.width,
-            260,
+            324,
             "spaceship",
             0,
             10
         ).setOrigin(0, 0);
 
+        // fastship is an "Intermediate Tier" mod
+        // this mod consists of new ship artwork that is smaller
+        // moves faster, and has the highest point value 
         // add fastship 1
-        this.fast1 = new Fastship
+        this.fast1 = new Spaceship
         (
             this,
             game.config.width + 288,
-            324,
+            132,
             "fastship",
             0,
             50
         ).setOrigin(0, 0);
 
-        // define keys
-        keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
-        keyLEFT = this.input.keyboard.addKey
-        (
-            Phaser.Input.Keyboard.KeyCodes.LEFT
-        );
-        keyRIGHT = this.input.keyboard.addKey
-        (
-            Phaser.Input.Keyboard.KeyCodes.RIGHT
-        );
+        //----------------------------------------------------------------------
+        // add the user input
+        // define mouse controls
+        mouse = this.input;
+        // define keyboard key M
         keyM = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
+        keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
 
+
+        //----------------------------------------------------------------------
+        // add the animations
         // animation config for ship explosions
         this.anims.create
         (
             {
-                key: "explode",
+                key: "explode", //
                 frames: this.anims.generateFrameNumbers
                 (
-                    "explosion",
-                    {
+                    "explosion", // key
+                    { // configuration object
                         start: 0,
                         end: 9,
                         first: 0
@@ -138,6 +143,8 @@ class Play extends Phaser.Scene
             }
         );
 
+        //----------------------------------------------------------------------
+        // add the UI text
         // player score updates during play
         this.p1Score = 0;
         // high score is saved across games played
@@ -207,14 +214,15 @@ class Play extends Phaser.Scene
             }
         );
 
-        // game over flag
+        //----------------------------------------------------------------------
+        // game over event
         this.gameOver = false;
         // 60s play clock
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall
         (
-            game.settings.gameTimer,
-            () =>
+            game.settings.gameTimer, // delay
+            () => // callback
             {
                 this.add.text
                 (
@@ -228,14 +236,14 @@ class Play extends Phaser.Scene
                 (
                     game.config.width/2,
                     game.config.height/2 + 64,
-                    "(F)ire to Restart or (M) for Menu",
+                    "(R) to Restart or (M) for Menu",
                     scoreConfig
                 ).setOrigin(0.5);
 
                 this.gameOver = true;
             },
-            null,
-            this
+            null, // args
+            this // calback scope
         );
 
         // set a timer to change the value of ship speed after
@@ -243,27 +251,28 @@ class Play extends Phaser.Scene
         this.factor = 1;
         this.upSpeed = this.time.delayedCall
         (
-            game.settings.gameTimer/2, // delay
-            () => // callback function
+            game.settings.gameTimer/2,
+            () =>
             {
                 this.factor = 1.5;
             },
-            null, // array of args
-            this // callback scope
+            null,
+            this
         );
     }
     // end create() ------------------------------------------------------------
     //--------------------------------------------------------------------------
     // UPDATE
     //--------------------------------------------------------------------------
-    // generally updates at every frame
     update()
     {
+        // generally updates every frame
+
         // when game is over remove the game clock event
         if(this.gameOver) this.time.removeAllEvents();
 
         // check for key input to restart
-        if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyF))
+        if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyR))
         {
             this.scene.restart(this.p1Score);
         }
@@ -335,7 +344,6 @@ class Play extends Phaser.Scene
     //--------------------------------------------------------------------------
     // EXPLOSION
     //--------------------------------------------------------------------------
-    //
     shipExplode(ship)
     {
         ship.alpha = 0; // set ship to be fully transparent
@@ -378,6 +386,7 @@ class Play extends Phaser.Scene
         seconds = seconds.toString().padStart(2, "0");
         return `${min}:${seconds}`;
     }
+    //-end formatTime-----------------------------------------------------------
 }
 // end class Play
 

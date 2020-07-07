@@ -18,4 +18,6 @@ game.settings =
 };
 
 // reserve some keyboard bindings
-let keyE, keyF, keyH, keyM, keyLEFT, keyRIGHT;
+let keyE, keyH, keyM, keyR;
+// reserve an inputPlugin binding
+let mouse;

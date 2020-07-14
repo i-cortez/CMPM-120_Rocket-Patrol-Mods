@@ -51,7 +51,7 @@ class Menu extends Phaser.Scene
         (
             centerX,
             centerY,
-            "Use arrows to move and (F) to fire",
+            "Move with mouse and LEFT Click to fire",
             menuConfig
         ).setOrigin(0.5);
 

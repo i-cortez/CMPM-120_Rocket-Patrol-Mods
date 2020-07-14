@@ -12,26 +12,31 @@ class Rocket extends Phaser.GameObjects.Sprite
         this.sfxRocket = scene.sound.add("sfx_rocket"); // add rocket sfx
     }
 
+    create()
+    {
+        
+    }
+
     update()
     {
         // left/right movement
         // if the rocket is firing, movement is not allowed
-        if(!this.isFiring)
-        {
-            // use the mouse as the user movement input
-            // code adapted from:
-            //  https://phaser.io/examples/v3/view/games/breakout/breakout
-            mouse.on
-            (
-                "pointermove", // event
-                (pointer) => // callback
+        // use the pointer as the user movement input
+        // code adapted from:
+        //  https://phaser.io/examples/v3/view/games/breakout/breakout
+        mouse.on
+        (
+            "pointermove", // event
+            (pointer) => // callback
+            {
+                if(!this.isFiring)
                 {
                     this.x = Phaser.Math.Clamp(pointer.x, 47, 578);
-                },
-                this // context
-            );
-        }
-
+                }
+            },
+            this
+        );
+       
         // fire button
         if(mouse.activePointer.leftButtonDown() && !this.isFiring) 
         {
@@ -55,3 +60,4 @@ class Rocket extends Phaser.GameObjects.Sprite
         this.y = 431;
     }
 }
+
